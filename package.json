@@ -1,0 +1,17 @@
+{
+  "name": "Joseph",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "clean": "rm -rf ./dist"
+  },
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.3.1",
+    "glob": "^10.3.3",
+    "mongoose": "^7.3.4"
+  }
+}
