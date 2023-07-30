@@ -70,7 +70,6 @@ export const command: Command =
 
           if ( SubCommand.length + SubCommandGroup.length > 0 )
           {
-            console.log(SubCommand);
             if ( SubCommand )
             {
               SubCommand.forEach(subCommand => {
