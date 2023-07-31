@@ -37,9 +37,11 @@ export const event: Event = {
               break;
             case 0:
               msg.content = message.content.slice(bracket.length, message.content.length);
+              msg.exists = true
               break;
             default:
               msg.content = message.content.slice(0, data);
+              msg.exists = true
               break;
           }
 
@@ -51,8 +53,6 @@ export const event: Event = {
           msg.attachment.push(v.url);
         }
 
-        if ( msg.content != "" || msg.attachment.length > 0 ) msg.exists = true;
-
         if ( msg.exists )
         {
 
@@ -63,7 +63,7 @@ export const event: Event = {
             name: char.name,
             avatar: char.image,
             channel: ( message.channel as TextChannel ).id
-          }).then( wb => wb.send({ content: msg.content, files: msg.attachment }) );
+          }).then( wb => wb.send({ content: msg.content || "", files: msg.attachment }) );
 
           await client.service.UpdateUserInfo({ message_count: char.message_count+1 }, { userID: message.author.id, name: char.name }, 1);
 
