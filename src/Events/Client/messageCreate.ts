@@ -46,7 +46,7 @@ export const event: Event = {
           attachment.push(v.url);
         }
 
-        if ( msg )
+        if ( msg || message.attachments )
         {
 
           message.delete();
@@ -56,7 +56,7 @@ export const event: Event = {
             name: char.name,
             avatar: char.image,
             channel: ( message.channel as TextChannel ).id
-          }).then( wb => wb.send({ content: msg, files: attachment }) );
+          }).then( wb => wb.send({ content: msg || "", files: attachment }) );
 
           await client.service.UpdateUserInfo({ message_count: char.message_count+1 }, { userID: message.author.id, name: char.name }, 1);
 
