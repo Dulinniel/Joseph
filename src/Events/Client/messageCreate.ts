@@ -16,7 +16,13 @@ export const event: Event = {
       let characters = await client.service.GetUserInfo({ userID: message.author.id }, 1, "*");
       if (characters)
       {
-        let msg, char;
+        let char;
+        let msg = {
+          content: "",
+          attachment: [],
+          exists: false
+        }
+
         for ( const character of characters )
         {
           char = character;
@@ -30,23 +36,24 @@ export const event: Event = {
               continue;
               break;
             case 0:
-              msg = message.content.slice(bracket.length, message.content.length);
+              msg.content = message.content.slice(bracket.length, message.content.length);
               break;
             default:
-              msg = message.content.slice(0, data);
+              msg.content = message.content.slice(0, data);
               break;
           }
 
           break;
         }
 
-        const attachment: Array<string> = [];
         for ( const [k, v] of message.attachments )
         {
-          attachment.push(v.url);
+          msg.attachment.push(v.url);
         }
 
-        if ( msg || message.attachments )
+        if ( msg.content != "" || msg.attachment.length > 0 ) msg.exists = true;
+
+        if ( msg.exists )
         {
 
           message.delete();
@@ -56,7 +63,7 @@ export const event: Event = {
             name: char.name,
             avatar: char.image,
             channel: ( message.channel as TextChannel ).id
-          }).then( wb => wb.send({ content: msg || "", files: attachment }) );
+          }).then( wb => wb.send({ content: msg.content, files: msg.attachment }) );
 
           await client.service.UpdateUserInfo({ message_count: char.message_count+1 }, { userID: message.author.id, name: char.name }, 1);
 
