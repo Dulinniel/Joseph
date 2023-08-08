@@ -1,80 +1,69 @@
 import { Message, Collection, Snowflake, Attachment, TextChannel } from "discord.js"
-import { WebhookMessage } from "../Interfaces";
 import Client from "../Client";
 
-async function RetrieveCharacter(client: Client, message: Message) : Promise<WebhookMessage> | null
+async function RetrieveCharacter(client: Client, message: Message)
 {
 
-  const WebhookConstructor: WebhookMessage = {
-    message: "",
-    name: null,
-    attachment: [],
-    avatar: null
-  };
+  message.content + " ";
+  const characters = await client.service.GetUserInfo({ userID: message.author.id }, 1, "*");
+  if ( !characters ) return;
+  const retrievedCharacter = characters.filter(character =>
+    message.content.startsWith(character.bracket[0]) && character.bracket[0].length != message.content.indexOf(" ") ||
+    message.content.endsWith(character.bracket[1]) && character.bracket[1].length >= message.content.lastIndexOf(" ")
+  );
 
-  let characters = await client.service.GetUserInfo({ userID: message.author.id }, 1, "*");
-  if ( characters)
-  {
-    for ( const character of characters )
-    {
-      let textPosition: number = character.bracket.indexOf("text");
-      let bracket: string = character.bracket.reverse()[textPosition];
-      let data: number = message.content.indexOf(bracket);
+  console.log(retrievedCharacter);
 
-      switch ( data )
-      {
-        case -1:
-          continue;
-          break;
-        case 0:
-          WebhookConstructor.message = message.content.slice(bracket.length, message.content.length);
-          WebhookConstructor.name = character.name;
-          WebhookConstructor.avatar = character.image;
-          break;
-        default:
-          WebhookConstructor.message = message.content.slice(0, data);
-          WebhookConstructor.name = character.name;
-          WebhookConstructor.avatar = character.image;
-          break;
-      }
-      break;
-    }
-    return addAttachment(message.attachments, WebhookConstructor);
-  } else return null
+  if ( retrievedCharacter == [] ) return;
+
+  return retrievedCharacter[0];
+
 }
 
-function addAttachment(attachments: Collection<Snowflake, Attachment>, WebhookConstructor: WebhookMessage) : WebhookMessage
+function cleanMessage(message: string, bracket: Array<string>) : string
+{
+  const textPosition = bracket.indexOf('text');
+  return message.split(bracket.reverse()[textPosition])[textPosition];
+}
+
+function addAttachment(attachments: Collection<Snowflake, Attachment>) : Array<string> | []
 {
 
-  if ( attachments )
+  const attachmentURL = [];
+  for ( const [k, v] of attachments )
   {
-    for ( const [k, v] of attachments )
-    {
-      WebhookConstructor.attachment.push(v.url);
-    }
+    attachmentURL.push(v.url);
   }
 
-  return WebhookConstructor;
-
+  return attachmentURL;
 }
 
 async function sendProxy(client: Client, message: Message)
 {
 
-  const WebhookConstructor = await RetrieveCharacter(client, message);
-
-  if ( !WebhookConstructor.name ) return;
+  const character = await RetrieveCharacter(client, message);
+  if ( !character ) return;
   else
   {
     message.delete();
-    let webhook = await ( message.channel as TextChannel ).guild.fetchWebhooks()
-    await webhook.get(client.config.WEBHOOK_ID as string).edit({
-      name: WebhookConstructor.name,
-      avatar: WebhookConstructor.avatar,
-      channel: ( message.channel as TextChannel ).id
-    }).then( wb => wb.send({ content: WebhookConstructor.message || "", files: WebhookConstructor.attachment }) );
-    return WebhookConstructor;
+    const channelHooks = await ( message.channel as TextChannel ).fetchWebhooks();
+    if ( channelHooks.size == 0 )
+    {
+      ( message.channel as TextChannel ).createWebhook({
+        name: character.name,
+        avatar: character.image
+      }).then(webhook => webhook.send({ content: cleanMessage(message.content, character.bracket), files: addAttachment(message.attachments)}))
+      .catch(console.error);
+    } else
+    {
+      channelHooks.first().edit({
+        name: character.name,
+        avatar: character.image
+      }).then(webhook => webhook.send({ content: cleanMessage(message.content, character.bracket), files: addAttachment(message.attachments)}))
+      .catch(console.error);
+    }
   }
+
 }
 
 export { sendProxy };
