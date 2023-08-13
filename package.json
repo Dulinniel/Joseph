@@ -9,9 +9,12 @@
     "clean": "rm -rf ./dist"
   },
   "dependencies": {
-    "discord.js": "^14.11.0",
+    "canvas": "^2.11.2",
+    "discord.js": "^14.12.1",
     "dotenv": "^16.3.1",
     "glob": "^10.3.3",
-    "mongoose": "^7.3.4"
+    "mongodb": "^5.7.0",
+    "mongoose": "^7.4.3",
+    "typescript": "^5.1.6"
   }
 }
