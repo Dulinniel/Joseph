@@ -15,9 +15,9 @@ export default class Interaction {
     this.Client = Client;
   }
 
-  async GetUserInfo(payload: {}, index: number, BringThemAllBeforeIGetMad?: string | never)
+  async GetUserInfo(payload, index: number, BringThemAllBeforeIGetMad?: string | never)
   {
-    const data = ( BringThemAllBeforeIGetMad == "*" ) ? await this.Schemas[index].find(payload) : await this.Schemas[index].findOne(payload);
+    const data = ( BringThemAllBeforeIGetMad == "*" ) ? await this.Schemas[index].find(payload).sort({ username: payload.username }).allowDiskUse() : await this.Schemas[index].findOne(payload);
     if ( data ) return data;
     else return;
   }
