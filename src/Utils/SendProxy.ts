@@ -12,9 +12,7 @@ async function RetrieveCharacter(client: Client, message: Message)
     message.content.endsWith(character.bracket[1]) && character.bracket[1].length >= message.content.lastIndexOf(" ")
   );
 
-  console.log(retrievedCharacter);
-
-  if ( retrievedCharacter == [] ) return;
+  if ( !retrievedCharacter ) return;
 
   return retrievedCharacter[0];
 
