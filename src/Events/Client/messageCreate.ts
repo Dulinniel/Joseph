@@ -1,7 +1,7 @@
 import { Event } from "../../Interfaces";
 import { Message } from "discord.js";
 import { User } from "../../Database/Models";
-import { LevelUp } from "../../Utils/Levels";
+import { LevelUp, GetNewRequiredXp } from "../../Utils/Levels";
 
 export const event: Event = {
   name: 'messageCreate',
@@ -16,38 +16,28 @@ export const event: Event = {
 
       if ( RegisteredMember )
       {
-        try
+        const dice = Math.floor((Math.random() * 99) + 1);
+
+        if (dice <= 25)
         {
-          const dice = Math.floor((Math.random() * 99) + 1);
+          let Xpgain = RegisteredMember.experience + ( Math.ceil(( Math.floor((Math.random() * 3) + 1) + message.content.length / 1000 ) ) );
+          await client.service.UpdateUserInfo({ experience: Xpgain }, { userID: message.author.id }, 0);
+        } else return;
 
-          if (dice <= 50)
-          {
-            let Xpgain = RegisteredMember.experience + ( Math.ceil(( Math.floor((Math.random() * 3) + 1) + ( RegisteredMember.experience / 5 ) ) ) );
-            await client.service.UpdateUserInfo({ experience: Xpgain }, { userID: message.author.id }, 0);
-          } else return;
-
-          if (RegisteredMember.experience >= RegisteredMember.requis)
-          {
-
-            let remainder = RegisteredMember.experience - RegisteredMember.requis;
-            const scaledLevel = (RegisteredMember.level < 10 ? 1.25 : RegisteredMember.level.toString().split("").length--);
-            let mantissa = RegisteredMember.level / 10^scaledLevel;
-
-            let requireXp = Math.ceil(( Math.log((RegisteredMember.level + 2)) * 10 ) * mantissa);
-
-            const levelUp = RegisteredMember.level + 1;
-            await client.service.UpdateUserInfo({
-              experience: remainder,
-              level: levelUp,
-              requis: requireXp,
-              username: message.author.username
-            }, { userID: message.author.id}, 0);
-
-            await LevelUp(client, message.author, levelUp);
-          }
-        } catch ( error )
+        if (RegisteredMember.experience >= RegisteredMember.requis)
         {
-          console.error(error);
+
+          const levelUp = RegisteredMember.level++
+          const requireXp = GetNewRequiredXp(levelUp)
+
+          await client.service.UpdateUserInfo({
+            experience: RegisteredMember.experience - RegisteredMember.requis,
+            level: levelUp,
+            requis: requireXp,
+            username: message.author.username
+          }, { userID: message.author.id}, 0);
+
+          await LevelUp(client, message.author, levelUp);
         }
       } else
       {
@@ -55,7 +45,7 @@ export const event: Event = {
             guildID: message.member.guild.id,
             guildName: message.member.guild.name,
             userID: message.member.id,
-            username: message.member.user.tag
+            username: message.author.username
           }, 0);
       }
 
