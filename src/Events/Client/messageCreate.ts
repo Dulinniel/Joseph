@@ -27,17 +27,16 @@ export const event: Event = {
         if (RegisteredMember.experience >= RegisteredMember.requis)
         {
 
-          const levelUp = RegisteredMember.level++
-          const requireXp = GetNewRequiredXp(levelUp)
+          const requireXp = GetNewRequiredXp(RegisteredMember.level + 1)
 
           await client.service.UpdateUserInfo({
             experience: RegisteredMember.experience - RegisteredMember.requis,
-            level: levelUp,
+            level: RegisteredMember.level + 1,
             requis: requireXp,
             username: message.author.username
           }, { userID: message.author.id}, 0);
 
-          await LevelUp(client, message.author, levelUp);
+          await LevelUp(client, message.author, RegisteredMember.level + 1);
         }
       } else
       {
