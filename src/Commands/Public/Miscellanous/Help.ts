@@ -39,7 +39,9 @@ export const command: Command =
         .setFooter({ text: "Un utilisateur a demandé de l'aide" })
 
       await categories.sort().forEach(async cat => {
-        let commands = client.commands.filter( cmd => cmd.categorie === cat );
+        let commands = ( interaction.memberPermissions.has(BigInt(8)) ) ?
+                          client.commands.filter( cmd => cmd.categorie === cat ) :
+                          client.commands.filter( cmd => cmd.categorie === cat && !cmd.payload.default_member_permissions );
         HelpEmbed.addFields({ name: cat, value: `${commands.map(cmd => `${inlineCode(cmd.payload.name)} : ${cmd.payload.description}`).join('\n')}`});
       });
 
