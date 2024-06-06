@@ -1,24 +1,33 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, UserContextMenuCommandInteraction } from "discord.js";
 import Client from "../Client";
 
-interface Run {
+interface Run
+{
   ( client: Client, interaction: ChatInputCommandInteraction )
 };
 
-export interface Command {
+interface RunUserCommand
+{
+  ( client: Client, interaction: UserContextMenuCommandInteraction )
+};
+
+export interface Command
+{
   categorie: string,
   developer?: boolean,
   payload: {
     name: string,
     type: number,
-    description: string,
+    description?: string,
     default_member_permissions?: any,
     options?: Array<Subcommand>
   },
-  execute?: Run
+  execute?: Run,
+  executeUserCommand?: RunUserCommand
 }
 
-export interface Subcommand {
+export interface Subcommand
+{
   name: string,
   description: string,
   type: number,
@@ -26,7 +35,7 @@ export interface Subcommand {
   options?: any,
   choices?: Array<{
     name: string,
-    value: string | number
+    value: string | number | boolean
   }>,
   autocomplete?: boolean
   execute?: Run

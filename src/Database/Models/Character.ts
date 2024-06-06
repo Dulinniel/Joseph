@@ -3,10 +3,7 @@ import { ICharacter } from "../../Interfaces/Models";
 
 const CharacterSchema = new Schema({
   _id: Schema.Types.ObjectId,
-  guildID: String,
-  guildName: String,
-  userID: String,
-  username: String,
+  user_id: String,
   name: String,
   bracket: Array,
   image: {

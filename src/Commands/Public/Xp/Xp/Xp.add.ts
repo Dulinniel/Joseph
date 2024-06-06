@@ -1,5 +1,6 @@
 import { LevelUp, GetNewRequiredXp } from "../../../../Utils/Levels";
 import { Subcommand } from "../../../../Interfaces";
+import { Experience } from "../../../../Database/Models";
 
 export const subcommand: Subcommand = {
   name: "xp.add",
@@ -23,18 +24,16 @@ export const subcommand: Subcommand = {
 
     if ( amount <= 0 ) interaction.reply({ content: "Le montant d'xp à ajouter doit être supérieur à 0" });
 
-    let RegisterdMember = await client.service.GetUserInfo({ userID: user.id }, 0);
+    let RegisterdMember = await client.service.GetInfo(Experience, { user_id: user.id });
 
     if (!RegisterdMember)
     {
-      await client.service.CreateUserInfo({
-        guildID: interaction.guild.id,
-        guildName: interaction.guild.name,
-        userID: user.id,
-        username: user.username
-      }, 0);
+      await client.service.CreateInfo(Experience, {
+        guild_id: interaction.guild.id,
+        user_id: user.id
+      });
 
-      RegisterdMember = await client.service.GetUserInfo({ userID: user.id }, 0);
+      RegisterdMember = await client.service.GetInfo(Experience, { user_id: user.id });
     }
 
     let xpGain = RegisterdMember.experience + amount;
@@ -54,12 +53,11 @@ export const subcommand: Subcommand = {
 
     }
 
-    await client.service.UpdateUserInfo({
+    await client.service.UpdateInfo(Experience, {
       experience: xpGain,
       level: level,
-      requis: required,
-      username: user.username
-    }, { userID: user.id }, 0);
+      requis: required
+    }, { user_id: user.id });
 
     interaction.reply({ content: `${amount}xp on été crédité à : ${user.username}`});
 

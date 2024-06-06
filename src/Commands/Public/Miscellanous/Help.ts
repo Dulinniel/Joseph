@@ -91,6 +91,11 @@ export const command: Command =
                     HelpEmbed.addFields({ name: `${subCommandGroup.name} ${SubOption.name}`,
                                           value: `${SubOption.description}\n\n${SubOption.options.map(opt => `${inlineCode(opt.name)} : ${opt.description}`).join('\n')}`
                     });
+                  } else
+                  {
+                    HelpEmbed.addFields({ name: `${subCommandGroup.name} ${SubOption.name}`,
+                                        value: `${SubOption.description}`
+                    });
                   }
                 });
               })

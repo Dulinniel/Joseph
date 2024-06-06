@@ -1,10 +1,10 @@
 import { Client, Collection } from "discord.js";
+import { Schema } from "mongoose"
 import { Config, Event, Command, Subcommand } from "../Interfaces";
 import { loadFiles } from "../Utils/FileLoader";
 import { Paginator } from "../Utils/Paginator";
-import { User, Character } from "../Database/Models";
 
-import Services from "../Database/Services";
+import Interaction from "../Database/Database.interaction";
 
 import config from "../environment.config"
 
@@ -15,7 +15,7 @@ export default class client extends Client
   public commands: Collection<String, Command> = new Collection();
   public subCommand: Collection<String, Subcommand> = new Collection();
   public config: Config = config;
-  public service: Services = new Services([User, Character], this);
+  public service: Interaction = new Interaction();
   public paginator: Paginator | never;
 
   public async init()

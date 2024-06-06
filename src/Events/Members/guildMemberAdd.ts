@@ -1,5 +1,6 @@
-import { Event } from "../../Interfaces";
 import { GuildMember, TextChannel, EmbedBuilder } from "discord.js";
+import { Event } from "../../Interfaces";
+import { Experience } from "../../Database/Models";
 
 export const event: Event = {
   name: 'guildMemberAdd',
@@ -21,13 +22,10 @@ export const event: Event = {
     const roleToAdd = member.guild.roles.cache.get("1130241033431683136")
     await member.roles.add(roleToAdd, "Nouveau membre")
 
-    await client.service.CreateUserInfo({
-      guildID: member.guild.id,
-      guildName: member.guild.name,
-      userID: member.user.id,
-      username: member.user.username,
-      position: 0
-    }, 0)
+    await client.service.CreateInfo(Experience, {
+      guild_id: member.guild.id,
+      user_id: member.user.id,
+    });
 
   }
 }

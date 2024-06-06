@@ -1,5 +1,5 @@
-import { Event } from "../../Interfaces";
 import { codeBlock, MessageReaction, User, ReactionEmoji, MessageResolvable, TextChannel } from "discord.js";
+import { Event } from "../../Interfaces";
 
 export const event: Event = {
   name: 'messageReactionAdd',

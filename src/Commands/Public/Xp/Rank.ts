@@ -2,6 +2,7 @@ import { AttachmentBuilder } from "discord.js";
 import { createCanvas, loadImage } from "canvas";
 import { Command } from "../../../Interfaces";
 import { drawText, map } from "../../../Utils/Draw";
+import { Experience } from "../../../Database/Models";
 
 export const command: Command =
 {
@@ -29,7 +30,7 @@ export const command: Command =
     const canvas = createCanvas(1800, 1200);
     const ctx = canvas.getContext('2d');
 
-    const RegisterdMember = await client.service.GetUserInfo({ userID: user.id }, 0);
+    const RegisterdMember = await client.service.GetInfo(Experience, { user_id: user.id });
 
     const profilePicture = await loadImage(user.displayAvatarURL({ extension: "png" }));
 
@@ -49,10 +50,13 @@ export const command: Command =
       ctx.fill();
     }
 
-    ctx.beginPath();
-    ctx.fillStyle = "#ffd1dc";
-    ctx.arc(cursorPosition, 900, 60, 0, Math.PI * 2, true);
-    ctx.fill();
+    for ( let i = 0; i < cursorPosition; i++ )
+    {
+      ctx.beginPath();
+      ctx.fillStyle = "#ffd1dc";
+      ctx.arc(cursorPosition + ( i * 6.5 ) + 20, 900, 60, 0, Math.PI * 2, true);
+      ctx.fill();
+    }
 
     drawText(ctx,
                   { x: 650, y: 490 },

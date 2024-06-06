@@ -1,6 +1,6 @@
 import { EmbedBuilder, inlineCode } from "discord.js";
 import { Paginator } from "../../../../Utils/Paginator";
-
+import { Character } from "../../../../Database/Models";
 import { Subcommand } from "../../../../Interfaces";
 
 export const subcommand: Subcommand =
@@ -10,7 +10,7 @@ export const subcommand: Subcommand =
   type: 1,
   async execute( client, interaction )
   {
-    const characters = await client.service.GetUserInfo({ userID: interaction.member.user.id }, 1, '*');
+    const characters = await client.service.GetEvery(Character, { user_id: interaction.member.user.id });
     client.paginator = new Paginator(characters, 6);
     const firstCharInstance = client.paginator.GetPage()
 

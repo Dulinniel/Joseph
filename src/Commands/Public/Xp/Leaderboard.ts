@@ -1,5 +1,6 @@
 import { EmbedBuilder } from "discord.js";
 import { Command } from "../../../Interfaces";
+import { Experience } from "../../../Database/Models";
 
 export const command: Command =
 {
@@ -14,7 +15,7 @@ export const command: Command =
 
   async execute( client, interaction )
   {
-    const EveryMember = await client.service.GetUserInfo({ guildID: interaction.guild.id }, 0, '*');
+    const EveryMember = await client.service.GetEvery(Experience, { guild_id: interaction.guild.id });
 
     EveryMember.sort(( a,b ) => {
       if ( a.level == b.level ) return b.experience - a.experience;

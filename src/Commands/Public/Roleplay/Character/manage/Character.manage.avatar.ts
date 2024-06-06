@@ -1,4 +1,5 @@
 import { Subcommand } from "../../../../../Interfaces";
+import { Character } from "../../../../../Database/Models";
 
 export const subcommand: Subcommand =
 {
@@ -24,10 +25,10 @@ export const subcommand: Subcommand =
 
     if ( [ "image/avif", "image/jpeg", "image/png" ].includes(attachment.contentType) )
     {
-      let doesItExists = await client.service.GetUserInfo({ name: name, userID: interaction.member.user.id }, 1);
+      let doesItExists = await client.service.GetInfo(Character, { name: name, user_id: interaction.member.user.id });
       if ( doesItExists )
       {
-        await client.service.UpdateUserInfo({ image: attachment.url }, { userID: interaction.member.user.id, name: name }, 1);
+        await client.service.UpdateInfo(Character, { image: attachment.url }, { userID: interaction.member.user.id, name: name });
         interaction.reply({ content: `L'avatar de ${name} a été mis à jour !` });
       } else interaction.reply({ content: "Ce personnage n'existe pas" });
     } else interaction.reply({ content: "Ceci n'est pas une image" });

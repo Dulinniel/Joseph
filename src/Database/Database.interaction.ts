@@ -1,30 +1,30 @@
 import { Types } from "mongoose";
-
-import { User, Character } from "./Models";
-
-import Services from "./Services";
+import { connect } from "mongoose";
 
 export default class Interaction {
 
-  public Schemas: any[];
-  public Client: any;
-
-  constructor(Schemas, Client)
+  async initDatabase(MongoURI: string)
   {
-    this.Schemas = Schemas;
-    this.Client = Client;
+    connect(MongoURI).then(() => console.log("Mongoose est connecté"));
   }
 
-  async GetUserInfo(payload, index: number, BringThemAllBeforeIGetMad?: string | never)
+  async GetInfo(Schema: any, payload: {})
   {
-    const data = ( BringThemAllBeforeIGetMad == "*" ) ? await this.Schemas[index].find(payload).sort({ username: payload.username }).allowDiskUse() : await this.Schemas[index].findOne(payload);
+    const data = await Schema.findOne(payload)
     if ( data ) return data;
     else return;
   }
 
-  async UpdateUserInfo(settings: {}, payload: {}, index: number)
+  async GetEvery(Schema: any, payload: {})
   {
-    let data = await this.GetUserInfo(payload, index);
+    const data = await Schema.find(payload)
+    if ( data ) return data;
+    else return;
+  }
+
+  async UpdateInfo(Schema: any, settings: {}, payload: {})
+  {
+    let data = await this.GetInfo(Schema, payload);
     if (typeof data != "object") data = {};
     for (const key in settings)
     {
@@ -33,20 +33,20 @@ export default class Interaction {
     return data.updateOne(settings);
   }
 
-  async CreateUserInfo(payload, index: number)
+  async CreateInfo(Schema: any, payload: {})
   {
     const merged = await Object.assign({ _id: new Types.ObjectId() }, payload);
-    const createUser = await new this.Schemas[index](merged);
-    createUser.save().then(u => console.log(`nouvel utilisateur -> ${u.username}`));
+    const createUser = await new Schema(merged);
+    createUser.save().then(u => console.log(`nouvellles données -> ${u}`));
   }
 
-  async RemoveUserInfo(payload: {}, index: number)
+  async RemoveInfo(Schema: any, payload: {}) : Promise<Boolean>
   {
-    const data = await this.GetUserInfo(payload, index);
+    const data = await this.GetInfo(Schema, payload);
     if ( data )
     {
       data.deleteOne();
-      return 0;
-    } else return -1
+      return true;
+    } else return false;
   }
 }

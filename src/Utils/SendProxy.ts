@@ -1,11 +1,12 @@
 import { Message, Collection, Snowflake, Attachment, TextChannel } from "discord.js"
 import Client from "../Client";
+import { Character } from "../Database/Models";
 
 async function RetrieveCharacter(client: Client, message: Message)
 {
 
   message.content + " ";
-  const characters = await client.service.GetUserInfo({ userID: message.author.id }, 1, "*");
+  const characters = await client.service.GetInfo(Character, { userID: message.author.id });
   if ( !characters ) return;
   const retrievedCharacter = characters.filter(character =>
     message.content.startsWith(character.bracket[0]) && character.bracket[0].length != message.content.indexOf(" ") ||

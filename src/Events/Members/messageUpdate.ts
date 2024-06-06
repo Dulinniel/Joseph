@@ -1,5 +1,5 @@
-import { Event } from "../../Interfaces";
 import { Message, TextChannel } from "discord.js";
+import { Event } from "../../Interfaces";
 import { sendProxy } from "../../Utils/SendProxy";
 
 export const event: Event = {

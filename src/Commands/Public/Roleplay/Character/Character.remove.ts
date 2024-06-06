@@ -1,5 +1,5 @@
 import { inlineCode } from "discord.js";
-
+import { Character } from "../../../../Database/Models";
 import { Subcommand } from "../../../../Interfaces";
 
 export const subcommand: Subcommand =
@@ -17,8 +17,8 @@ export const subcommand: Subcommand =
   {
     const name = interaction.options.getString("name");
 
-    const deletedState = await client.service.RemoveUserInfo({ name: name, userID: interaction.member.user.id }, 1);
-    if ( deletedState == 0 )
+    const deletedState = await client.service.RemoveInfo(Character, { name: name, user_id: interaction.member.user.id });
+    if ( deletedState )
     {
       interaction.reply({ content: "Ton personnage a été supprimé" });
     } else interaction.reply({ content: `Le personnage: ${name} n'existe pas` });

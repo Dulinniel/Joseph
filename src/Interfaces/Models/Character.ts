@@ -1,9 +1,6 @@
 export interface ICharacter {
   _id: string,
-  guildID: string,
-  guildName: string,
-  userID: string,
-  username: string,
+  user_id: string,
   name: string,
   bracket: string[],
   image: string,
